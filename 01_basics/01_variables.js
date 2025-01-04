@@ -11,6 +11,10 @@ accountCity = 'sangli'
 accountEmail = 'John@gmail.com'
 accountPassword = 'john123@lovesJane'
 accountCity = 'Pune'
+/*
+Prefer not to use the var
+because of the issues of the block scope functionality
+*/
 
 console.table({"Account id" : accountId, "Account email" : accountEmail, "Account password":accountPassword, "Account city": accountCity})
 
