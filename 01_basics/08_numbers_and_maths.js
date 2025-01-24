@@ -37,3 +37,4 @@ console.log(Math.round(Math.random() * 10) + 1) // 1 to 10
 const minVal = 10
 const maxVal = 20
 console.log(Math.floor(Math.random() * (maxVal - minVal + 1)) + minVal )
+// this is the formula for generating the random number between the min value and max value 
