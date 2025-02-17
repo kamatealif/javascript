@@ -1,10 +1,12 @@
 // Immediatly Invoked Function Expression (IIFE)
 (function child() {
+  // named IIFE 
 	console.log("DB Connected");
 })();
 
 // ()()
 
-(() => {
-	console.log(`Db Connected Two`);
-})()
+((name) => {
+  // with parameter 
+  console.log(`Db Connected ${name}`);
+})("rohan")
