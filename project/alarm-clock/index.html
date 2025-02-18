@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alarm Clock</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            text-align: center;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        input, button {
+            margin: 10px;
+            padding: 10px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Alarm Clock</h1>
+        <label for="alarmTime">Set Alarm Time:</label>
+        <input type="time" id="alarmTime">
+        <br>
+        <label for="alarmSound">Choose Alarm Sound:</label>
+        <input type="file" id="alarmSound" accept="audio/*">
+        <br>
+        <button onclick="setAlarm()">Set Alarm</button>
+        <button onclick="stopAlarm()">Stop Alarm</button>
+        <p id="status"></p>
+        <p id="timeLeft"></p>
+        <p id="alarmMessage"></p>
+    </div>
+
+    <audio id="defaultBeep" src="beep.wav"></audio>
+    
+    <script>
+        let alarmTime;
+        let alarmSound = new Audio();
+        let interval;
+        let alarmTimeout;
+
+        function setAlarm() {
+            alarmTime = document.getElementById('alarmTime').value;
+            const soundFile = document.getElementById('alarmSound').files[0];
+            
+            if (!alarmTime) {
+                document.getElementById('status').textContent = "Please set a valid time for the alarm.";
+                return;
+            }
+            
+            if (soundFile) {
+                alarmSound.src = URL.createObjectURL(soundFile);
+            } else {
+                alarmSound.src = "beep.wav";
+            }
+            
+            document.getElementById('status').textContent = "Alarm set for " + alarmTime;
+            updateTimeLeft();
+            checkAlarm();
+        }
+
+        function stopAlarm() {
+            clearInterval(interval);
+            clearTimeout(alarmTimeout);
+            alarmSound.pause();
+            alarmSound.currentTime = 0;
+            document.getElementById('status').textContent = "Alarm stopped";
+            document.getElementById('timeLeft').textContent = "";
+            document.getElementById('alarmMessage').textContent = "";
+        }
+
+        function updateTimeLeft() {
+            clearInterval(interval);
+            interval = setInterval(() => {
+                let now = new Date();
+                let alarmDate = new Date();
+                let [alarmHour, alarmMinute] = alarmTime.split(":").map(Number);
+                
+                alarmDate.setHours(alarmHour, alarmMinute, 0, 0);
+                if (alarmDate < now) {
+                    alarmDate.setDate(alarmDate.getDate() + 1);
+                }
+                
+                let timeDiff = alarmDate - now;
+                let hoursLeft = Math.floor(timeDiff / (1000 * 60 * 60));
+                let minutesLeft = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+                let secondsLeft = Math.floor((timeDiff % (1000 * 60)) / 1000);
+                
+                document.getElementById('timeLeft').textContent = `Time left: ${hoursLeft}h ${minutesLeft}m ${secondsLeft}s`;
+            }, 1000);
+        }
+
+        function checkAlarm() {
+            alarmTimeout = setTimeout(() => {
+                let now = new Date();
+                let currentTime = now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0');
+                
+                if (currentTime === alarmTime) {
+                    alarmSound.play().catch(error => console.error("Playback error: ", error));
+                    document.getElementById('timeLeft').textContent = "Alarm ringing now!";
+                    document.getElementById('alarmMessage').textContent = "Wake up!";
+                }
+            }, getAlarmTimeout());
+        }
+
+        function getAlarmTimeout() {
+            let now = new Date();
+            let alarmDate = new Date();
+            let [alarmHour, alarmMinute] = alarmTime.split(":").map(Number);
+            
+            alarmDate.setHours(alarmHour, alarmMinute, 0, 0);
+            if (alarmDate < now) {
+                alarmDate.setDate(alarmDate.getDate() + 1);
+            }
+            
+            return alarmDate - now;
+        }
+        function getAlarmTimeout() {
+            let now = new Date();
+            let alarmDate = new Date();
+            let [alarmHour, alarmMinute] = alarmTime.split(":").map(Number);
+            
+            alarmDate.setHours(alarmHour, alarmMinute, 0, 0);
+            if (alarmDate < now) {
+                alarmDate.setDate(alarmDate.getDate() + 1);
+            }
+            
+            return alarmDate - now;
+        }
+    </script>
+</body>
+</html>
+    
