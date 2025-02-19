@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Alarm Clock</title>
     <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
-        <style>
+    <style>
         body {
             background-color: #121212; /* Dark gray background */
         }
@@ -44,27 +44,52 @@
         .text-large {
             font-size: 24px;
         }
+        .alarm-clock {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        .alarm-clock .container {
+            width: 300px;
+        }
+        .alarm-clock .container .header {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .alarm-clock .container .alarm-time {
+            font-size: 48px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .alarm-clock .container .alarm-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
-    <div class="container mx-auto mt-20 w-1/2">
-        <h1 class="text-large text-[#1e94d7] mb-4">Alarm Clock</h1>
-        <label for="alarmTime" class="block mb-2 text-white">Set Alarm Time:</label>
-        <input type="time" id="alarmTime" class="w-full">
-        <br>
-        <label for="alarmSound" class="block mb-2 text-white">Choose Alarm Sound:</label>
-        <input type="file" id="alarmSound" accept="audio/*" class="w-full">
-        <br>
-        <button onclick="setAlarm()" class="w-full mb-2">Set Alarm</button>
-        <button onclick="stopAlarm()" class="w-full">Stop Alarm</button>
-        <p id="status" class="mt-4"></p>
-        <p id="timeLeft" class="mt-4"></p>
-        <p id="alarmMessage" class="mt-4"></p>
+    <div class="alarm-clock">
+        <div class="container">
+            <div class="header text-green-600">Alarm Clock</div>
+            <input type="time" id="alarmTime" class="w-full">
+            <br>
+            <input type="file" id="alarmSound" accept="audio/*" class="w-full">
+            <br>
+            <div class="alarm-actions">
+                <button onclick="setAlarm()" class="w-full mb-2">Set Alarm</button>
+                <button onclick="stopAlarm()" class="w-full">Stop Alarm</button>
+            </div>
+            <p id="status" class="mt-4"></p>
+            <p id="timeLeft" class="mt-4"></p>
+            <p id="alarmMessage" class="mt-4"></p>
+        </div>
     </div>
 
     <audio id="defaultBeep" src="beep.wav"></audio>
-    
-    
     <script>
         let alarmTime;
         let alarmSound = new Audio();
