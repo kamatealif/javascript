@@ -4,19 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Alarm Clock</title>
-    <style>
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+        <style>
         body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            background-color: #f4f4f4;
-            font-family: Arial, sans-serif;
+            background-color: #121212; /* Dark gray background */
         }
         .container {
-            text-align: center;
-            background: white;
+            background-color: #1f1f1f; /* Dark gray background */
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -25,26 +19,51 @@
             margin: 10px;
             padding: 10px;
             font-size: 16px;
+            border: none;
+            border-radius: 5px;
+        }
+        input[type="time"] {
+            background-color: #333; /* Dark gray background */
+            color: #66d9ef; /* Teal text */
+        }
+        input[type="file"] {
+            background-color: #333; /* Dark gray background */
+            color: #66d9ef; /* Teal text */
+        }
+        button {
+            background-color: #8b9467; /* Greenish-blue background */
+            color: #fff; /* White text */
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #6c7c5c; /* Darker greenish-blue on hover */
+        }
+        p {
+            color: #66d9ef; /* Teal text */
+        }
+        .text-large {
+            font-size: 24px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Alarm Clock</h1>
-        <label for="alarmTime">Set Alarm Time:</label>
-        <input type="time" id="alarmTime">
+    <div class="container mx-auto mt-20 w-1/2">
+        <h1 class="text-large text-[#1e94d7] mb-4">Alarm Clock</h1>
+        <label for="alarmTime" class="block mb-2 text-white">Set Alarm Time:</label>
+        <input type="time" id="alarmTime" class="w-full">
         <br>
-        <label for="alarmSound">Choose Alarm Sound:</label>
-        <input type="file" id="alarmSound" accept="audio/*">
+        <label for="alarmSound" class="block mb-2 text-white">Choose Alarm Sound:</label>
+        <input type="file" id="alarmSound" accept="audio/*" class="w-full">
         <br>
-        <button onclick="setAlarm()">Set Alarm</button>
-        <button onclick="stopAlarm()">Stop Alarm</button>
-        <p id="status"></p>
-        <p id="timeLeft"></p>
-        <p id="alarmMessage"></p>
+        <button onclick="setAlarm()" class="w-full mb-2">Set Alarm</button>
+        <button onclick="stopAlarm()" class="w-full">Stop Alarm</button>
+        <p id="status" class="mt-4"></p>
+        <p id="timeLeft" class="mt-4"></p>
+        <p id="alarmMessage" class="mt-4"></p>
     </div>
 
     <audio id="defaultBeep" src="beep.wav"></audio>
+    
     
     <script>
         let alarmTime;
