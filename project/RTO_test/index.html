@@ -8,32 +8,36 @@
         body {
             font-family: Arial, sans-serif;
             text-align: center;
-            background-color: #f4f4f4;
+            background: linear-gradient(to right, #00c6ff, #0072ff);
             padding: 20px;
+            color: white;
         }
         .container {
             background: white;
             padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 50%;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            width: 40%;
             margin: auto;
+            color: black;
         }
         .question {
             margin-bottom: 15px;
-            font-size: 18px;
+            font-size: 20px;
+            font-weight: bold;
         }
         button {
             padding: 10px 20px;
             margin: 10px;
             border: none;
-            background-color: green;
+            background-color: #ff9800;
             color: white;
             cursor: pointer;
             border-radius: 5px;
+            font-size: 16px;
         }
         button:hover {
-            background-color: darkgreen;
+            background-color: #e68900;
         }
     </style>
 </head>
@@ -41,7 +45,8 @@
     <div class="container">
         <h2>RTO Driving License Test</h2>
         <div id="quiz"></div>
-        <button onclick="submitTest()">Submit</button>
+        <button onclick="nextQuestion()">Next</button>
+        <button onclick="submitTest()" style="display: none;">Submit</button>
         <h3 id="result"></h3>
     </div>
     
@@ -52,32 +57,49 @@
             { question: "Which side should you overtake from in India?", options: ["Left", "Right", "Either Side"], answer: "Right" }
         ];
 
-        function loadQuiz() {
+        let currentQuestionIndex = 0;
+        let userAnswers = [];
+
+        function loadQuestion() {
             let quizDiv = document.getElementById("quiz");
             quizDiv.innerHTML = "";
-            questions.forEach((q, index) => {
-                let questionHTML = `<div class='question'>
-                    <p>${index + 1}. ${q.question}</p>`;
-                q.options.forEach(option => {
-                    questionHTML += `<label><input type='radio' name='q${index}' value='${option}'> ${option}</label><br>`;
-                });
-                questionHTML += "</div>";
-                quizDiv.innerHTML += questionHTML;
+            let q = questions[currentQuestionIndex];
+            let questionHTML = `<div class='question'>
+                <p>${currentQuestionIndex + 1}. ${q.question}</p>`;
+            q.options.forEach(option => {
+                questionHTML += `<label><input type='radio' name='q' value='${option}'> ${option}</label><br>`;
             });
+            questionHTML += "</div>";
+            quizDiv.innerHTML = questionHTML;
+        }
+
+        function nextQuestion() {
+            let selected = document.querySelector("input[name='q']:checked");
+            if (selected) {
+                userAnswers[currentQuestionIndex] = selected.value;
+                currentQuestionIndex++;
+                if (currentQuestionIndex < questions.length) {
+                    loadQuestion();
+                } else {
+                    document.querySelector("button[onclick='nextQuestion()']").style.display = "none";
+                    document.querySelector("button[onclick='submitTest()']").style.display = "inline-block";
+                }
+            } else {
+                alert("Please select an answer before proceeding.");
+            }
         }
 
         function submitTest() {
             let score = 0;
             questions.forEach((q, index) => {
-                let selected = document.querySelector(`input[name='q${index}']:checked`);
-                if (selected && selected.value === q.answer) {
+                if (userAnswers[index] === q.answer) {
                     score++;
                 }
             });
             document.getElementById("result").innerText = `Your Score: ${score} / ${questions.length}`;
         }
 
-        loadQuiz();
+        loadQuestion();
     </script>
 </body>
 </html>
