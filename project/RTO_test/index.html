@@ -11,95 +11,442 @@
             background: linear-gradient(to right, #00c6ff, #0072ff);
             padding: 20px;
             color: white;
+            margin: 0;
         }
         .container {
             background: white;
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-            width: 40%;
-            margin: auto;
+            width: 80%;
+            max-width: 600px;
+            margin: 20px auto;
             color: black;
         }
         .question {
             margin-bottom: 15px;
-            font-size: 20px;
+            font-size: 18px;
+            text-align: left;
+        }
+        .question p {
             font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .options {
+            text-align: left;
+            margin-bottom: 10px;
+        }
+        .option-label {
+            display: block;
+            margin: 8px 0;
+            padding: 8px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .option-label:hover {
+            background-color: #f0f0f0;
+        }
+        input[type="radio"] {
+            margin-right: 10px;
+        }
+        .button-group {
+            margin-top: 20px;
         }
         button {
-            padding: 10px 20px;
+            padding: 12px 24px;
             margin: 10px;
             border: none;
-            background-color: #ff9800;
             color: white;
             cursor: pointer;
             border-radius: 5px;
             font-size: 16px;
+            transition: background-color 0.3s;
         }
-        button:hover {
+        .next-btn {
+            background-color: #4CAF50;
+        }
+        .next-btn:hover {
+            background-color: #45a049;
+        }
+        .submit-btn {
+            background-color: #ff9800;
+        }
+        .submit-btn:hover {
             background-color: #e68900;
+        }
+        .progress {
+            height: 10px;
+            background-color: #ddd;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background-color: #4CAF50;
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 20px;
+        }
+        .pass {
+            background-color: #dff0d8;
+            color: #3c763d;
+        }
+        .fail {
+            background-color: #f2dede;
+            color: #a94442;
+        }
+        .timer {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .question-timer {
+            font-size: 16px;
+            font-weight: bold;
+            color: #e74c3c;
+            margin-bottom: 10px;
+        }
+        .question-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #666;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h2>RTO Driving License Test</h2>
+        <div class="progress">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <div class="timer" id="timer">Time: 00:00</div>
+        <div class="question-info">
+            <span id="questionCounter">Question 1 of 15</span>
+            <span>Pass mark: 9/15</span>
+        </div>
+        <div class="question-timer" id="questionTimer">Time remaining: 30s</div>
         <div id="quiz"></div>
-        <button onclick="nextQuestion()">Next</button>
-        <button onclick="submitTest()" style="display: none;">Submit</button>
-        <h3 id="result"></h3>
+        <div class="button-group">
+            <button id="nextBtn" class="next-btn" onclick="nextQuestion()">Next Question</button>
+            <button id="submitBtn" class="submit-btn" onclick="submitTest()" style="display: none;">Submit Test</button>
+        </div>
+        <div id="result" class="result" style="display: none;"></div>
     </div>
     
     <script>
         const questions = [
             { question: "What is the speed limit in a residential area?", options: ["30 km/h", "50 km/h", "70 km/h"], answer: "30 km/h" },
             { question: "What does a red traffic light mean?", options: ["Stop", "Go", "Slow Down"], answer: "Stop" },
-            { question: "Which side should you overtake from in India?", options: ["Left", "Right", "Either Side"], answer: "Right" }
+            { question: "Which side should you overtake from in India?", options: ["Left", "Right", "Either Side"], answer: "Right" },
+            { question: "What does a yellow traffic light mean?", options: ["Speed Up", "Prepare to Stop", "Stop"], answer: "Prepare to Stop" },
+            { question: "What should you do at a zebra crossing?", options: ["Stop for pedestrians", "Drive faster", "Ignore it"], answer: "Stop for pedestrians" },
+            { question: "What does a 'No Parking' sign indicate?", options: ["You can stop but not park", "You can park anytime", "You must keep moving"], answer: "You can stop but not park" },
+            { question: "What is the minimum age for a driving license in India?", options: ["16 years", "18 years", "21 years"], answer: "18 years" },
+            { question: "When should you use the horn?", options: ["To alert others", "To annoy people", "All the time"], answer: "To alert others" },
+            { question: "What is the purpose of a roundabout?", options: ["Control traffic flow", "Block traffic", "Confuse drivers"], answer: "Control traffic flow" },
+            { question: "What should you do if you see an ambulance behind you?", options: ["Give way", "Block it", "Race it"], answer: "Give way" },
+            { question: "What does a broken white line in the middle of the road mean?", options: ["No overtaking", "Overtaking allowed if safe", "Pedestrian crossing ahead"], answer: "Overtaking allowed if safe" },
+            { question: "What is the maximum blood alcohol concentration (BAC) allowed for drivers in India?", options: ["0.03%", "0.08%", "0%"], answer: "0%" },
+            { question: "When should you use high beam headlights?", options: ["In heavy traffic", "On well-lit roads", "On dark roads without traffic"], answer: "On dark roads without traffic" },
+            { question: "What should you check before changing lanes?", options: ["Radio station", "Blind spots in mirrors", "Fuel level"], answer: "Blind spots in mirrors" },
+            { question: "What does a triangular road sign indicate?", options: ["Warning", "Information", "Direction"], answer: "Warning" },
+            { question: "Which vehicle has the right of way at an unmarked intersection?", options: ["Vehicle on the left", "Vehicle on the right", "Larger vehicle"], answer: "Vehicle on the right" },
+            { question: "What should you do if your vehicle breaks down on a highway?", options: ["Leave it and walk for help", "Place warning triangles and call for assistance", "Repair it immediately on the road"], answer: "Place warning triangles and call for assistance" },
+            { question: "What does a solid yellow line on your side of the road indicate?", options: ["Overtaking allowed", "No overtaking", "Parking allowed"], answer: "No overtaking" },
+            { question: "How often should you check your tire pressure?", options: ["Once a year", "Once a month", "Only when they look flat"], answer: "Once a month" },
+            { question: "What is the purpose of ABS (Anti-lock Braking System)?", options: ["Increase speed", "Prevent wheels from locking during braking", "Improve fuel efficiency"], answer: "Prevent wheels from locking during braking" }
         ];
 
+        // Test parameters
+        const QUESTIONS_PER_TEST = 15;
+        const PASSING_SCORE = 9;
+        const SECONDS_PER_QUESTION = 30;
+        
+        let selectedQuestions = [];
         let currentQuestionIndex = 0;
         let userAnswers = [];
+        let startTime;
+        let timerInterval;
+        let questionTimerInterval;
+        let questionTimeRemaining;
 
-        function loadQuestion() {
-            let quizDiv = document.getElementById("quiz");
-            quizDiv.innerHTML = "";
-            let q = questions[currentQuestionIndex];
-            let questionHTML = `<div class='question'>
-                <p>${currentQuestionIndex + 1}. ${q.question}</p>`;
-            q.options.forEach(option => {
-                questionHTML += `<label><input type='radio' name='q' value='${option}'> ${option}</label><br>`;
-            });
-            questionHTML += "</div>";
-            quizDiv.innerHTML = questionHTML;
+        // Initialize the test
+        function initTest() {
+            // Shuffle and select 15 questions
+            selectedQuestions = shuffleAndSelect(questions, QUESTIONS_PER_TEST);
+            currentQuestionIndex = 0;
+            userAnswers = new Array(QUESTIONS_PER_TEST).fill(null);
+            
+            // Reset UI
+            document.getElementById("result").style.display = "none";
+            document.getElementById("nextBtn").style.display = "inline-block";
+            document.getElementById("submitBtn").style.display = "none";
+            
+            // Start timer
+            startTime = new Date();
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(updateTimer, 1000);
+            
+            // Load first question
+            loadQuestion();
         }
-
-        function nextQuestion() {
-            let selected = document.querySelector("input[name='q']:checked");
-            if (selected) {
-                userAnswers[currentQuestionIndex] = selected.value;
-                currentQuestionIndex++;
-                if (currentQuestionIndex < questions.length) {
-                    loadQuestion();
-                } else {
-                    document.querySelector("button[onclick='nextQuestion()']").style.display = "none";
-                    document.querySelector("button[onclick='submitTest()']").style.display = "inline-block";
+        
+        // Start question timer
+        function startQuestionTimer() {
+            // Clear previous timer if exists
+            if (questionTimerInterval) {
+                clearInterval(questionTimerInterval);
+            }
+            
+            // Set time remaining to 30 seconds
+            questionTimeRemaining = SECONDS_PER_QUESTION;
+            updateQuestionTimer();
+            
+            // Start new timer
+            questionTimerInterval = setInterval(function() {
+                questionTimeRemaining--;
+                updateQuestionTimer();
+                
+                // If time is up, move to the next question
+                if (questionTimeRemaining <= 0) {
+                    clearInterval(questionTimerInterval);
+                    handleTimeUp();
                 }
+            }, 1000);
+        }
+        
+        // Update question timer display
+        function updateQuestionTimer() {
+            document.getElementById("questionTimer").textContent = `Time remaining: ${questionTimeRemaining}s`;
+            
+            // Change color based on time remaining
+            if (questionTimeRemaining <= 5) {
+                document.getElementById("questionTimer").style.color = "#e74c3c"; // Red
+            } else if (questionTimeRemaining <= 10) {
+                document.getElementById("questionTimer").style.color = "#f39c12"; // Orange
             } else {
-                alert("Please select an answer before proceeding.");
+                document.getElementById("questionTimer").style.color = "#2ecc71"; // Green
+            }
+        }
+        
+        // Handle time up for question
+        function handleTimeUp() {
+            // If no answer selected, mark as null (will be counted as incorrect)
+            if (!document.querySelector("input[name='q']:checked")) {
+                userAnswers[currentQuestionIndex] = null;
+            }
+            
+            // Show alert
+            alert("Time's up! Moving to the next question.");
+            
+            // Move to next question
+            currentQuestionIndex++;
+            
+            if (currentQuestionIndex < QUESTIONS_PER_TEST) {
+                loadQuestion();
+            } else {
+                showReview();
             }
         }
 
+        // Shuffle array and select n items
+        function shuffleAndSelect(array, n) {
+            let shuffled = [...array];
+            
+            // Fisher-Yates shuffle
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            
+            return shuffled.slice(0, n);
+        }
+
+        // Update timer display
+        function updateTimer() {
+            const now = new Date();
+            const timeDiff = Math.floor((now - startTime) / 1000); // in seconds
+            const minutes = Math.floor(timeDiff / 60).toString().padStart(2, '0');
+            const seconds = (timeDiff % 60).toString().padStart(2, '0');
+            document.getElementById("timer").textContent = `Time: ${minutes}:${seconds}`;
+        }
+
+        // Load current question
+        function loadQuestion() {
+            let quizDiv = document.getElementById("quiz");
+            let q = selectedQuestions[currentQuestionIndex];
+            
+            // Update progress
+            document.getElementById("progressBar").style.width = `${(currentQuestionIndex / QUESTIONS_PER_TEST) * 100}%`;
+            document.getElementById("questionCounter").textContent = `Question ${currentQuestionIndex + 1} of ${QUESTIONS_PER_TEST}`;
+            
+            // Create question HTML
+            let questionHTML = `
+                <div class='question'>
+                    <p>${currentQuestionIndex + 1}. ${q.question}</p>
+                    <div class='options'>`;
+            
+            // Add options with user's previous selection (if any)
+            q.options.forEach((option, index) => {
+                const isChecked = userAnswers[currentQuestionIndex] === option ? 'checked' : '';
+                questionHTML += `
+                    <label class='option-label'>
+                        <input type='radio' name='q' value='${option}' ${isChecked}> ${option}
+                    </label>`;
+            });
+            
+            questionHTML += `</div></div>`;
+            quizDiv.innerHTML = questionHTML;
+            
+            // Show/hide buttons
+            if (currentQuestionIndex === QUESTIONS_PER_TEST - 1) {
+                document.getElementById("nextBtn").textContent = "Review Answers";
+            } else {
+                document.getElementById("nextBtn").textContent = "Next Question";
+            }
+            
+            // Start the question timer
+            startQuestionTimer();
+        }
+
+        // Handle next question button
+        function nextQuestion() {
+            let selected = document.querySelector("input[name='q']:checked");
+            
+            // Clear the question timer
+            if (questionTimerInterval) {
+                clearInterval(questionTimerInterval);
+            }
+            
+            if (selected) {
+                // Save answer
+                userAnswers[currentQuestionIndex] = selected.value;
+            } else {
+                // If no answer is selected, mark as null (counted as incorrect)
+                userAnswers[currentQuestionIndex] = null;
+            }
+            
+            // Move to next question or show review
+            currentQuestionIndex++;
+            
+            if (currentQuestionIndex < QUESTIONS_PER_TEST) {
+                // Load next question
+                loadQuestion();
+            } else {
+                // Show review screen
+                showReview();
+            }
+        }
+
+        // Show review screen
+        function showReview() {
+            // Clear any active question timer
+            if (questionTimerInterval) {
+                clearInterval(questionTimerInterval);
+            }
+            
+            // Hide question timer
+            document.getElementById("questionTimer").style.display = "none";
+            
+            let quizDiv = document.getElementById("quiz");
+            let reviewHTML = `<h3>Review Your Answers</h3>`;
+            
+            selectedQuestions.forEach((q, index) => {
+                const answered = userAnswers[index] ? `Your answer: ${userAnswers[index]}` : "Not answered";
+                reviewHTML += `
+                    <div class='question-review'>
+                        <p>Question ${index + 1}: ${q.question}</p>
+                        <p>${answered}</p>
+                    </div>`;
+            });
+            
+            quizDiv.innerHTML = reviewHTML;
+            
+            // Update buttons for submission
+            document.getElementById("nextBtn").style.display = "none";
+            document.getElementById("submitBtn").style.display = "inline-block";
+        }
+
+        // Submit test
         function submitTest() {
+            // Stop timer
+            clearInterval(timerInterval);
+            
+            // Calculate score
             let score = 0;
-            questions.forEach((q, index) => {
+            let unanswered = 0;
+            selectedQuestions.forEach((q, index) => {
                 if (userAnswers[index] === q.answer) {
                     score++;
                 }
+                if (userAnswers[index] === null) {
+                    unanswered++;
+                }
             });
-            document.getElementById("result").innerText = `Your Score: ${score} / ${questions.length}`;
+            
+            // Calculate time taken
+            const endTime = new Date();
+            const timeTakenSeconds = Math.floor((endTime - startTime) / 1000);
+            const minutes = Math.floor(timeTakenSeconds / 60);
+            const seconds = timeTakenSeconds % 60;
+            
+            // Determine pass/fail
+            const passed = score >= PASSING_SCORE;
+            const resultClass = passed ? "pass" : "fail";
+            const resultText = passed ? "PASSED" : "FAILED";
+            
+            // Display result
+            let resultDiv = document.getElementById("result");
+            resultDiv.className = `result ${resultClass}`;
+            resultDiv.innerHTML = `
+                <h3>Test ${resultText}!</h3>
+                <p>Your Score: ${score} / ${QUESTIONS_PER_TEST}</p>
+                <p>Unanswered Questions: ${unanswered}</p>
+                <p>Time Taken: ${minutes}m ${seconds}s</p>
+                <p>${passed ? "Congratulations! You have passed the RTO driving test." : 
+                   "Unfortunately, you did not pass. Required score: " + PASSING_SCORE + "/15"}</p>
+            `;
+            resultDiv.style.display = "block";
+            
+            // Show detailed results
+            let quizDiv = document.getElementById("quiz");
+            let detailsHTML = `<h3>Detailed Results</h3>`;
+            
+            selectedQuestions.forEach((q, index) => {
+                const isCorrect = userAnswers[index] === q.answer;
+                const resultClass = isCorrect ? "correct" : "incorrect";
+                const statusText = userAnswers[index] === null ? "Time expired - No answer" : (userAnswers[index] || "Skipped");
+                
+                detailsHTML += `
+                    <div class='question-result ${resultClass}'>
+                        <p>Question ${index + 1}: ${q.question}</p>
+                        <p>Your answer: ${statusText}</p>
+                        <p>Correct answer: ${q.answer}</p>
+                    </div>`;
+            });
+            
+            detailsHTML += `
+                <button onclick="initTest()" class="next-btn" style="margin-top: 20px;">Try Again</button>
+            `;
+            
+            quizDiv.innerHTML = detailsHTML;
+            
+            // Hide submit button
+            document.getElementById("submitBtn").style.display = "none";
         }
 
-        loadQuestion();
+        // Initialize the test when page loads
+        window.onload = initTest;
     </script>
 </body>
 </html>
